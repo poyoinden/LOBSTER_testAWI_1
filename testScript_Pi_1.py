@@ -2,6 +2,8 @@
 import time
 import os
 import subprocess
+import serial
+import datetime
 
 # Function definitions.
 def camera_handling():
@@ -14,8 +16,7 @@ def camera_handling():
 
 def measure_temp(): #!
     temp = os.popen("vcgencmd measure_temp").readline()
-    print(temp)
-    return temp.replace("temp=", "").replace("'C", "")
+    return temp.replace("temp=", "").replace("'C", "").replace("\n","")
 
 
 def retreive_data():
@@ -39,12 +40,14 @@ def logging(inputstring = ""):
 
 def print_to_UART(inputstring = ""):
     """ print_to_UART prints an input string to the UART port. """
-    print(inputstring)
+    port = serial.Serial("/dev/serial0", baudrate=115200, timeout=3.0)
+    print("printing... " + inputstring)
+    port.write(inputstring)  #str(datetime.datetime.utcnow()) + " Helloworld\r\n")
     return
 
 
 if __name__ == "__main__":
-    period = 10  # Creates about ~1GB/hr in pictures.
+    period = 0.3  # Creates about ~1GB/hr in pictures.
     t = time.time()
     counter = 0
 
@@ -55,6 +58,7 @@ if __name__ == "__main__":
         retreive_data()
         encoding()
         logging()
-        print_to_UART("a")
-
+#	print measure_temp()
+        print_to_UART(str(datetime.datetime.utcnow()) + "\t" + str(measure_temp()) + "\n")
+#	print_to_UART(measure_temp())
         time.sleep(max(0, t - time.time()))
