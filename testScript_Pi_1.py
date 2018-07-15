@@ -51,7 +51,7 @@ if __name__ == "__main__":
     while True:
         t += period
 
-        camera_handling()
+        #camera_handling()
         retreive_data()
         encoding()
         logging()
