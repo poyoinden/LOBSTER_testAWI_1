@@ -4,6 +4,7 @@ import os
 import subprocess
 import serial
 import datetime
+from threading import Thread
 
 # Function definitions.
 def start_camera():
@@ -51,16 +52,16 @@ if __name__ == "__main__":
     t = time.time()
     counter = 0
 
-    start_camera()
+    Thread(target=start_camera, args=()).start()
 
     while True:
         t += period
 
         #camera_handling()
         retreive_data()
-        logging()
 #	print measure_temp()
         msg = str(datetime.datetime.utcnow()) + "\t" + str(measure_temp()) + "\n"
+        logging(msg)
 	print_to_UART(msg)
 #	print_to_UART(measure_temp())
         time.sleep(max(0, t - time.time()))
